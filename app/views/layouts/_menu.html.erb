@@ -1,0 +1,15 @@
+
+
+  <% if user_signed_in? %>
+    <nav class="navbar d-flex bg-body-tertiary shadow-sm">
+      <div class ="p-2 flex-grow-1">SSAC</div>
+              <%= button_to "Log Out", destroy_user_session_path, method: :delete, style:'color:#FFFFFF; text-decoration-line: none', class: "btn btn-primary m-2" %>
+      <button class="btn btn-primary m-2" type="button">Profile</button>
+    </nav>
+  <% else %>
+    <nav class="navbar d-flex bg-body-tertiary shadow-sm">
+      <div class ="p-2 flex-grow-1">SSAC</div>
+      <button class="btn btn-primary m-2" type="button">log In</button>
+      <button class="btn btn-primary m-2" type="button">Sign Up</button>
+    </nav>
+  <% end %>
