@@ -5,5 +5,5 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :attachments, as: :attachable
-  has_one :file, through: :attachments
+
 end

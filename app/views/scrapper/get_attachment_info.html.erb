@@ -1,0 +1,24 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Distributor</th>
+      <th>Inventory</th>
+      <th>Order Amounts</th>
+      <th>Prices</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @web_info.each do |distributor, info|%>
+      <%info[0][:order_amounts].each_with_index do |row,idx|%>
+        <tr>
+          <td><%= distributor %></td>
+          <td><%= info[0][:inventory] %></td>
+          <td><%= row %></td>
+          <td><%= info[0][:price][idx] %></td>
+        </tr>
+      <%end%>
+    <%end%>
+  </tbody>
+</table>
+
+<%= link_to "Download XLSX", {controller: "scrapper", action: "generate_xlsx", web_info: @web_info }, method: :get, class: "btn btn-primary" %>

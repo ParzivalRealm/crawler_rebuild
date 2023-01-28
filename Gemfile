@@ -5,6 +5,8 @@ ruby "3.1.2"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4"
+gem "nested_form"
+gem "wombat"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -14,6 +16,13 @@ gem "pry-byebug"
 gem "devise"
 
 gem 'simple_form'
+
+gem "capybara"
+gem "selenium-webdriver"
+gem "webdrivers"
+gem 'rexml', '~> 3.2', '>= 3.2.5'
+gem 'axlsx_rails'
+gem 'axlsx'
 
 gem 'roo', '~> 2.9'
 
@@ -77,9 +86,4 @@ group :development do
   # gem "spring"
 end
 
-group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem "capybara"
-  gem "selenium-webdriver"
-  gem "webdrivers"
-end
+

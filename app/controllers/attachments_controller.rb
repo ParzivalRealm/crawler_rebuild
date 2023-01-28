@@ -20,22 +20,23 @@ class AttachmentsController < ApplicationController
   end
 
   # POST /attachments or /attachments.json
+  #user logged in first screen that uploads file and it is saved to the database, then it redirects to the scrapper controlleer because that means that the user wants to see the data next.
   def create
     @attachment = Attachment.new(attachment_params)
 
     respond_to do |format|
       if @attachment.save
-        format.html { redirect_to attachment_url(@attachment), notice: "Attachment was successfully created." }
-        format.json { render :show, status: :created, location: @attachment }
+        format.html { redirect_to controller: 'scrapper', action: 'get_attachment_info', file: @attachment.id, notice: "Attachment was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @attachment.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # PATCH/PUT /attachments/1 or /attachments/1.json
   def update
+
     respond_to do |format|
       if @attachment.update(attachment_params)
         format.html { redirect_to attachment_url(@attachment), notice: "Attachment was successfully updated." }
@@ -45,6 +46,7 @@ class AttachmentsController < ApplicationController
         format.json { render json: @attachment.errors, status: :unprocessable_entity }
       end
     end
+
   end
 
   # DELETE /attachments/1 or /attachments/1.json
@@ -55,6 +57,7 @@ class AttachmentsController < ApplicationController
       format.html { redirect_to attachments_url, notice: "Attachment was successfully destroyed." }
       format.json { head :no_content }
     end
+    
   end
 
   private
@@ -63,8 +66,10 @@ class AttachmentsController < ApplicationController
       @attachment = Attachment.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
+    # params are sent by the form, this is to save an attachment to the database, the model is polymorphic
     def attachment_params
-      params.fetch(:attachment, {})
+      params.require(:attachment).permit(:file, :attachable_type, :attachable_id)
     end
 end
+
+
