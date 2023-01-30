@@ -25,13 +25,18 @@ class AttachmentsController < ApplicationController
     @attachment = Attachment.new(attachment_params)
 
     respond_to do |format|
-      if @attachment.save
-        format.html { redirect_to controller: 'scrapper', action: 'get_attachment_info', file: @attachment.id, notice: "Attachment was successfully created." }
+      if @attachment.save && @attachment.attachable_type == "User" #if the attachment is saved and belongs to user then right now it is a scrapper request, this might change in the future. 
+        @attachment.create_scrapper_and_attachment #this method is in the attachment model, it creates the scrapper and the attachment and saves it to the database.
+        format.html { redirect_to controller: 'scrapper', action: 'show', scrapper: @attachment.scrapper_id, notice: "Attachment and Crawler were successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
       end
     end
 
+  end
+
+  def create_from_scrapper
+    @attachment = Attachment.new(attachment_params)
   end
 
   # PATCH/PUT /attachments/1 or /attachments/1.json
@@ -65,6 +70,7 @@ class AttachmentsController < ApplicationController
     def set_attachment
       @attachment = Attachment.find(params[:id])
     end
+
 
     # params are sent by the form, this is to save an attachment to the database, the model is polymorphic
     def attachment_params

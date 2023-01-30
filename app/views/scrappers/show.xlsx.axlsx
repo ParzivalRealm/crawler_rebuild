@@ -1,0 +1,10 @@
+Axlsx::Package.new do |p|
+  p.workbook.add_worksheet(name: "Scrapper") do |sheet|
+    sheet.add_row @scrapper.keys
+    @scrapper.values.first.count.times do |i|
+      sheet.add_row @scrapper.values.map { |v| v[i] }
+    end
+  end
+  p.use_shared_strings = true
+  send_data p.to_stream.read, type: 'application/xlsx', filename: "scrapper.xlsx"
+end

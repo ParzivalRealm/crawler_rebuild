@@ -1,0 +1,4 @@
+<%= simple_form_for @scrapper, url: create_with_attachment_scrappers_path(@scrapper), method: :post do |f|%>
+  <%= f.input :attachment, as: :file %>
+  <%= f.submit %>
+<%end%>

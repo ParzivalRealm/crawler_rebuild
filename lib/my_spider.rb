@@ -1,8 +1,6 @@
 class MySpider  
-  require 'wombat'
-  require 'byebug'
+
   attr_accessor :url_base, :path_base, :part_number, :inventory, :prices
-  include Wombat::Crawler
 
   def initialize(url_base:, path_base:, part_number:, xpaths:)
     @url_base = url_base
@@ -13,7 +11,10 @@ class MySpider
     @data = {}
   end
 
-  def web_info
+  def scrape_info
+
+
+    #The structure needs to change on the database, so i can add scraped_data_type as a column, and just save like: data_type = "price", manufacturer, etc... So it is easier to query and show, also to handle scrapping errors, as i will threat each scrape data as its own type.
     options = Selenium::WebDriver::Firefox::Options.new
     options.add_argument('--headless')
     options.add_argument("--window-size=1920,1080")

@@ -1,0 +1,25 @@
+<%binding.pry%>
+<table class="table">
+  <thead>
+    <tr>
+      <% @scrappers.keys.each do |key| %>
+        <th><%= key.capitalize %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% @scrappers.values.first.count.times do |i| %>
+      <tr>
+        <% @scrappers.values.each do |values| %>
+          <td><%= values[i] %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Download XLSX", generate_xlsx_scrapper_path(@scrappers), class: "btn btn-primary" %>
+
+
+
+
