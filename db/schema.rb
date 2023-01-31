@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_30_172335) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
   create_table "attachments", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -55,9 +55,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_172335) do
     t.integer "scrapper_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "data_type"
-    t.string "data_value"
     t.string "part_number"
+    t.string "order_amount"
+    t.integer "inventory"
+    t.decimal "price"
   end
 
   create_table "scrappers", force: :cascade do |t|

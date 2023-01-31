@@ -34,7 +34,7 @@ class QuotesSpider(scrapy.Spider):
         
         self.driver.get(response.url)
         time.sleep(3)
-        item = self.driver.find_element(By.CSS_SELECTOR, "a.product_name")
+        item = self.driver.find_element(By.CSS_SELECTOR, "a.product_name") # debe de revisar si en el search result viene alguna descripcion que contenga exactamente el part_number
         links = [item.get_attribute('href')]
         for link in links:
             yield scrapy.Request(url=link, callback=self.parse_product_page)

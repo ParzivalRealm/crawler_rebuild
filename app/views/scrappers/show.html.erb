@@ -1,19 +1,29 @@
-<%binding.pry%>
-<table class="table">
-  <thead>
+<table class="table table-bordered">
+  <thead class ="thead-dark">
     <tr>
-      <% @scrappers.keys.each do |key| %>
-        <th><%= key.capitalize %></th>
-      <% end %>
+      <th>Supplier</th>
+      <th>Product ID</th>
+      <th>Order Amount</th>
+      <th>Inventory</th>
+      <th>Price</th>
+      <th>Created At</th>
     </tr>
   </thead>
   <tbody>
-    <% @scrappers.values.first.count.times do |i| %>
-      <tr>
-        <% @scrappers.values.each do |values| %>
-          <td><%= values[i] %></td>
+    <% @scrappers.each do |supplier, product_info| %>
+      <%supplier_id = supplier%>
+      <% product_info.each do |product_id, details| %>
+        <% details.each do |row|%>
+          <tr>
+            <td><%= supplier_id %></td>
+            <td><%= product_id %></td>
+            <td><%= row[:order_amount] %></td>
+            <td><%= row[:inventory] %></td>
+            <td><%= row[:price] %></td>
+            <td><%= row[:created_at] %></td>
+          </tr>
         <% end %>
-      </tr>
+      <% end %>
     <% end %>
   </tbody>
 </table>

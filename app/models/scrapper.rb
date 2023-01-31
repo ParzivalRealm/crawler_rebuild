@@ -25,24 +25,21 @@ end
  end
 
   def parsed_for_table
-   table_data = {}
 
-    self.scraped_data.each do |data|
-      if data.data_type == "price"
-        table_data["price"] ||= []
-        table_data["price"] << data.data_value
-        table_data["supplier_name"] ||= []
-        table_data["supplier_name"] << Supplier.find(data.supplier_id).name
-        table_data["part_number"] ||= []
-        table_data["part_number"] << data.part_number
-      end
-      if data.data_type == "inventory"
-        table_data["inventory"] ||= []
-        table_data["inventory"] << data.data_value
-      end
+
+    new_data_structure = {}
+    self.scraped_data.each do |scraped_datum|
+      supplier_id = Supplier.find(scraped_datum.supplier_id).name
+      supplier_data = new_data_structure[supplier_id] ||= {}
+      part_number = scraped_datum.part_number
+      part_number_data = supplier_data[part_number] ||= []
+      part_number_data << {
+        order_amount: scraped_datum.order_amount,
+        inventory: scraped_datum.inventory,
+        price: scraped_datum.price,
+        created_at: scraped_datum.created_at
+      }
     end
-   
-  
-    table_data
+    new_data_structure
   end
 end
