@@ -24,6 +24,8 @@ gem 'rexml', '~> 3.2', '>= 3.2.5'
 gem 'axlsx_rails'
 gem 'axlsx'
 
+gem 'unicorn'
+
 gem 'roo', '~> 2.9'
 
 gem 'carrierwave', '>= 3.0.0.beta', '< 4.0'
