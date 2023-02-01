@@ -2,7 +2,7 @@ class CreateAttachments < ActiveRecord::Migration[7.0]
   def change
     create_table :attachments do |t|
       t.references :attachment, polymorphic: true, index: true
-      t.string :attachment_type
+      #t.string :attachment_type
       t.string :file
       t.string :file_type
       t.string :file_size
