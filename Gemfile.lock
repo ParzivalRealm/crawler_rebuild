@@ -218,8 +218,6 @@ GEM
       byebug (~> 11.0)
       pry (>= 0.13, < 0.15)
     public_suffix (5.0.1)
-    puma (5.6.5)
-      nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.6.2)
     rack-test (2.0.2)
@@ -337,6 +335,7 @@ DEPENDENCIES
   bcrypt_pbkdf
   bootsnap
   capistrano
+  capistrano-bundler
   capistrano-passenger
   capistrano-rails
   capistrano-rbenv
@@ -351,7 +350,6 @@ DEPENDENCIES
   nested_form
   pg
   pry-byebug
-  puma
   rails (~> 7.0.4)
   redis (~> 4.0)
   rexml (~> 3.2, >= 3.2.5)
