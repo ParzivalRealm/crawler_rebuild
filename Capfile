@@ -42,6 +42,7 @@ require 'capistrano'
 require 'capistrano-rails'
 require 'capistrano-passenger'
 require 'capistrano-rbenv'
+require 'capistrano/rvm'
 
 require 'capistrano/bundler' # Rails needs Bundler, right?
 require 'capistrano/rails/assets'
