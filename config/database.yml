@@ -8,14 +8,14 @@ default: &default
 
 development:
   <<: *default
-  database: crawler_ruby_development
+  database: crawler_rebuild_development
 
 test:
   <<: *default
-  database: crawler_ruby_test
+  database: crawler_rebuild_test
 
 production:
   <<: *default
-  database: crawler_ruby_production
+  database: crawler_rebuild_production
   username: deploy
   password: ENV['DB_PASSWORD']
