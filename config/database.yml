@@ -18,4 +18,4 @@ production:
   <<: *default
   database: crawler_rebuild_production
   username: deploy
-  password: ENV['DB_PASSWORD']
+  password: ENV["DB_PASSWORD"]
