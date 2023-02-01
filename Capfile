@@ -1,7 +1,7 @@
-require 'capistrano', '~> 3.11'
-require 'capistrano-rails', '~> 1.4'
-require 'capistrano-passenger', '~> 0.2.0'
-require 'capistrano-rbenv', '~> 2.1', '>= 2.1.4'
+require 'capistrano'
+require 'capistrano-rails'
+require 'capistrano-passenger'
+require 'capistrano-rbenv'
 
 require 'capistrano/bundler' # Rails needs Bundler, right?
 require 'capistrano/rails/assets'
