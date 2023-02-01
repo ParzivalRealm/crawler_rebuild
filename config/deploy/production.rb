@@ -48,7 +48,6 @@ server '137.184.228.212', user: 'deploy', roles: %w{app db web}
 #    forward_agent: false,
 #    auth_methods: %w(password)
 #  }
-  set :default_env, { path: "~/.rbenv/shims:~/.rbenv/bin:$PATH" } # Add Rbenv to the path because on my local machin i use rvm
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------
