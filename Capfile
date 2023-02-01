@@ -1,7 +1,11 @@
-gem 'capistrano', '~> 3.11'
-gem 'capistrano-rails', '~> 1.4'
-gem 'capistrano-passenger', '~> 0.2.0'
-gem 'capistrano-rbenv', '~> 2.1', '>= 2.1.4'
+require 'capistrano', '~> 3.11'
+require 'capistrano-rails', '~> 1.4'
+require 'capistrano-passenger', '~> 0.2.0'
+require 'capistrano-rbenv', '~> 2.1', '>= 2.1.4'
+
+require 'capistrano/bundler' # Rails needs Bundler, right?
+require 'capistrano/rails/assets'
+require 'capistrano/rails/migrations'
 
 set :rbenv_type, :user
 set :rbenv_ruby, '3.1.2'
@@ -38,8 +42,8 @@ install_plugin Capistrano::SCM::Git
 # require "capistrano/rbenv"
 # require "capistrano/chruby"
 # require "capistrano/bundler"
-# require "capistrano/rails/assets"
-# require "capistrano/rails/migrations"
+#  require "capistrano/rails/assets"
+#  require "capistrano/rails/migrations"
 # require "capistrano/passenger"
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
