@@ -26,6 +26,8 @@ gem 'axlsx'
 
 gem 'unicorn'
 
+gem 'pg'
+
 gem 'roo', '~> 2.9'
 
 gem 'carrierwave', '>= 3.0.0.beta', '< 4.0'
