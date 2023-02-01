@@ -2,20 +2,20 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  host: localhost
+  host: 127.0.0.1
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
 
 development:
   <<: *default
-  database: my_app_development
+  database: crawler_ruby_development
 
 test:
   <<: *default
-  database: my_app_test
+  database: crawler_ruby_test
 
 production:
   <<: *default
-  database: my_app_production
-  username: my_app
-  password: <%= ENV['DB_PASSWORD'] %>
+  database: crawler_ruby_production
+  username: deploy
+  password: ENV['DB_PASSWORD']
