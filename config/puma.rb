@@ -7,7 +7,6 @@ preload_app!
 
 
 
-rackup DefaultRackup
 
 environment ENV['RACK_ENV'] || 'development'
 
