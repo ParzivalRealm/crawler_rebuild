@@ -15,6 +15,9 @@ gem "pry-byebug"
 
 gem "devise"
 
+gem 'ed25519'
+gem 'bcrypt_pbkdf'
+
 gem 'simple_form'
 
 gem 'pg'
@@ -25,8 +28,10 @@ gem "webdrivers"
 gem 'rexml', '~> 3.2', '>= 3.2.5'
 gem 'axlsx_rails'
 gem 'axlsx'
-
-gem 'unicorn'
+gem 'capistrano'
+gem 'capistrano-rails'
+gem 'capistrano-passenger'
+gem 'capistrano-rbenv'
 
 
 gem 'roo', '~> 2.9'
@@ -39,7 +44,7 @@ gem "sqlite3", "~> 1.4"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma"
 
-gem 'puma-rails'
+
 
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
