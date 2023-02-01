@@ -1,14 +1,14 @@
 
 
-set :rbenv_type, :user
-set :rbenv_ruby, '3.1.2'
+set :rvm_type, :user  
+set :rvm_ruby_version, '3.1.2'
 
 # Load DSL and set up stages
 require "capistrano/setup"
 
 # Include default deployment tasks
 require "capistrano/deploy"
-
+require 'capistrano/rvm'
 # Load the SCM plugin appropriate to your project:
 #
 # require "capistrano/scm/hg"
@@ -42,7 +42,7 @@ require 'capistrano'
 require 'capistrano-rails'
 require 'capistrano-passenger'
 require 'capistrano-rbenv'
-require 'capistrano/rvm'
+
 
 require 'capistrano/bundler' # Rails needs Bundler, right?
 require 'capistrano/rails/assets'
