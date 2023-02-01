@@ -1,11 +1,4 @@
-require 'capistrano'
-require 'capistrano-rails'
-require 'capistrano-passenger'
-require 'capistrano-rbenv'
 
-require 'capistrano/bundler' # Rails needs Bundler, right?
-require 'capistrano/rails/assets'
-require 'capistrano/rails/migrations'
 
 set :rbenv_type, :user
 set :rbenv_ruby, '3.1.2'
@@ -45,6 +38,14 @@ install_plugin Capistrano::SCM::Git
 #  require "capistrano/rails/assets"
 #  require "capistrano/rails/migrations"
 # require "capistrano/passenger"
+require 'capistrano'
+require 'capistrano-rails'
+require 'capistrano-passenger'
+require 'capistrano-rbenv'
+
+require 'capistrano/bundler' # Rails needs Bundler, right?
+require 'capistrano/rails/assets'
+require 'capistrano/rails/migrations'
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
