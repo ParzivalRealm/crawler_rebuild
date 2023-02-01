@@ -4,13 +4,13 @@ threads threads_count, threads_count
 
 preload_app!
 
-port ENV.fetch("PORT") { 3000 }
+
 
 rackup DefaultRackup
-port ENV['PORT'] || 3000
+
 environment ENV['RACK_ENV'] || 'development'
 
-bind "tcp://146.190.126.182:#{port}"
+bind "tcp://146.190.126.182:3000"
 
 
 #Set the number of workers to at least the number of cores
