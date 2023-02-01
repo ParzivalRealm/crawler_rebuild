@@ -17,6 +17,8 @@ gem "devise"
 
 gem 'simple_form'
 
+gem 'pg'
+
 gem "capybara"
 gem "selenium-webdriver"
 gem "webdrivers"
@@ -26,7 +28,6 @@ gem 'axlsx'
 
 gem 'unicorn'
 
-gem 'pg'
 
 gem 'roo', '~> 2.9'
 
