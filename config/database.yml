@@ -18,4 +18,4 @@ production:
   <<: *default
   database: crawler_rebuild_production
   username: deploy
-  password: Kingdom1
+  password: ENV["DB_PASSWORD"]
