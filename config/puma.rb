@@ -9,6 +9,8 @@ port ENV['PORT'] || 3000
 environment ENV['RACK_ENV'] || 'development'
 
 bind "tcp://146.190.126.182:#{port}"
+
+
 #Set the number of workers to at least the number of cores
 workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 
