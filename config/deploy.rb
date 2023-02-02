@@ -1,5 +1,5 @@
 # Change these
-server '64.227.97.163', port: 80, roles: [:web, :app, :db], primary: true
+server '64.227.97.163', port: 22, roles: [:web, :app, :db], primary: true
 
 set :repo_url,        'git@github.com:ParzivalRealm/crawler_rebuild.git'
 set :application,     'crawler_rebuild'
