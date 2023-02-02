@@ -3,6 +3,7 @@
 set :rvm_type, :user  
 set :rvm_ruby_version, '3.1.2'
 
+
 # Load DSL and set up stages
 require "capistrano/setup"
 
@@ -40,8 +41,8 @@ install_plugin Capistrano::SCM::Git
 # require "capistrano/passenger"
 require 'capistrano'
 require 'capistrano-rails'
-require 'capistrano-passenger'
 require 'capistrano-rbenv'
+require 'capistrano/puma'
 
 
 require 'capistrano/bundler' # Rails needs Bundler, right?
