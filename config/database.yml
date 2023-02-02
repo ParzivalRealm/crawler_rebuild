@@ -8,11 +8,10 @@ default: &default
 
 development:
   <<: *default
-  database: crawler_rebuild_development
+  database: crawler_rebuild_development2
+  username: deploy
+  password: Kingdom1
 
-test:
-  <<: *default
-  database: crawler_rebuild_test
 
 production:
   <<: *default

@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "attachments", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -21,8 +24,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
   end
 
   create_table "attachments_scrappers", id: false, force: :cascade do |t|
-    t.integer "scrapper_id", null: false
-    t.integer "attachment_id", null: false
+    t.bigint "scrapper_id", null: false
+    t.bigint "attachment_id", null: false
     t.index ["attachment_id", "scrapper_id"], name: "index_attachments_scrappers_on_attachment_id_and_scrapper_id"
     t.index ["scrapper_id", "attachment_id"], name: "index_attachments_scrappers_on_scrapper_id_and_attachment_id"
   end
@@ -36,16 +39,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "part_numbers_scraped_data", id: false, force: :cascade do |t|
-    t.integer "part_number_id", null: false
-    t.integer "scraped_datum_id", null: false
-    t.index "\"part_number\"", name: "index_part_numbers_scraped_data_on_part_number"
-    t.index "\"scraped_data\"", name: "index_part_numbers_scraped_data_on_scraped_data"
-  end
-
   create_table "part_numbers_suppliers", id: false, force: :cascade do |t|
-    t.integer "part_number_id", null: false
-    t.integer "supplier_id", null: false
+    t.bigint "part_number_id", null: false
+    t.bigint "supplier_id", null: false
     t.index ["part_number_id"], name: "index_part_numbers_suppliers_on_part_number_id"
     t.index ["supplier_id"], name: "index_part_numbers_suppliers_on_supplier_id"
   end
