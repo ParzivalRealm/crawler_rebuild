@@ -222,80 +222,80 @@ class ScrapperService
   end
   
   
-  def fetch_suggestions(query)
-    uri = URI("https://www.digikey.com/suggestions/v3/search")
-    params = { keywordPrefix: query, maxSuggestions: 5 }
-    uri.query = URI.encode_www_form(params)
+  # def fetch_suggestions(query)
+  #   uri = URI("https://www.digikey.com/suggestions/v3/search")
+  #   params = { keywordPrefix: query, maxSuggestions: 5 }
+  #   uri.query = URI.encode_www_form(params)
     
-    headers = {
-      ':authority' => 'www.digikey.com',
-      ':method' => 'GET',
-      ':path' => "#{uri.path}?#{uri.query}",
-      ':scheme' => 'https',
-      'accept' => '*/*',
-      'accept-encoding' => 'gzip, deflate, br',
-      'accept-language' => 'en,en-US;q=0.9,es;q=0.8',
-      'cache-control' => 'no-cache',
-      'lang' => 'en',
-      'pragma' => 'no-cache',
-      'referer' => 'https://www.digikey.com/',
-      'sec-ch-ua' => '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
-      'sec-ch-ua-mobile' => '?0',
-      'sec-ch-ua-platform' => '"Linux"',
-      'sec-fetch-dest' => 'empty',
-      'sec-fetch-mode' => 'cors',
-      'sec-fetch-site' => 'same-origin',
-      'site' => 'US',
-      'user-agent' => 'Mozilla/5."0"(X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0."0"Safari/537.36',
-      'x-currency' => 'USD'
-    }
+  #   headers = {
+  #     ':authority' => 'www.digikey.com',
+  #     ':method' => 'GET',
+  #     ':path' => "#{uri.path}?#{uri.query}",
+  #     ':scheme' => 'https',
+  #     'accept' => '*/*',
+  #     'accept-encoding' => 'gzip, deflate, br',
+  #     'accept-language' => 'en,en-US;q=0.9,es;q=0.8',
+  #     'cache-control' => 'no-cache',
+  #     'lang' => 'en',
+  #     'pragma' => 'no-cache',
+  #     'referer' => 'https://www.digikey.com/',
+  #     'sec-ch-ua' => '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
+  #     'sec-ch-ua-mobile' => '?0',
+  #     'sec-ch-ua-platform' => '"Linux"',
+  #     'sec-fetch-dest' => 'empty',
+  #     'sec-fetch-mode' => 'cors',
+  #     'sec-fetch-site' => 'same-origin',
+  #     'site' => 'US',
+  #     'user-agent' => 'Mozilla/5."0"(X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0."0"Safari/537.36',
+  #     'x-currency' => 'USD'
+  #   }
     
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.start
-    request = Net::HTTP::Get.new(uri.request_uri, headers)
-    sleep 2
-    response = http.request(request)
-    JSON.parse(response.body)
-  end
+  #   http = Net::HTTP.new(uri.host, uri.port)
+  #   http.use_ssl = true
+  #   http.start
+  #   request = Net::HTTP::Get.new(uri.request_uri, headers)
+  #   sleep 2
+  #   response = http.request(request)
+  #   JSON.parse(response.body)
+  # end
   
   
-  def fetch_page(url)
-    uri = URI(url)
+  # def fetch_page(url)
+  #   uri = URI(url)
     
-    headers = {
-      'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-      'accept-encoding' => 'gzip, deflate, br',
-      'accept-language' => 'en,en-US;q=0.9,es;q=0.8',
-      'cache-control' => 'no-cache',
-      'pragma' => 'no-cache',
-      'sec-ch-ua' => '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
-      'sec-ch-ua-mobile' => '?0',
-      'sec-ch-ua-platform' => '"Linux"',
-      'sec-fetch-dest' => 'document',
-      'sec-fetch-mode' => 'navigate',
-      'sec-fetch-site' => 'same-origin',
-      'sec-fetch-user' => '?1',
-      'upgrade-insecure-requests' => '1',
-      'user-agent' => 'Mozilla/5."0"(X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0."0"Safari/537.36'
-    }
+  #   headers = {
+  #     'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+  #     'accept-encoding' => 'gzip, deflate, br',
+  #     'accept-language' => 'en,en-US;q=0.9,es;q=0.8',
+  #     'cache-control' => 'no-cache',
+  #     'pragma' => 'no-cache',
+  #     'sec-ch-ua' => '"Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"',
+  #     'sec-ch-ua-mobile' => '?0',
+  #     'sec-ch-ua-platform' => '"Linux"',
+  #     'sec-fetch-dest' => 'document',
+  #     'sec-fetch-mode' => 'navigate',
+  #     'sec-fetch-site' => 'same-origin',
+  #     'sec-fetch-user' => '?1',
+  #     'upgrade-insecure-requests' => '1',
+  #     'user-agent' => 'Mozilla/5."0"(X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0."0"Safari/537.36'
+  #   }
     
-    response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-      request = Net::HTTP::Get.new(url)
-      headers.each do |key, value|
-        request[key] = value
-      end
+  #   response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+  #     request = Net::HTTP::Get.new(url)
+  #     headers.each do |key, value|
+  #       request[key] = value
+  #     end
       
-      http.request(request)
-    end
-    if response['content-encoding'] == 'gzip'
-      body = Zlib::GzipReader.new(StringIO.new(response.body)).read
-    else
-      body = response.body
-    end
+  #     http.request(request)
+  #   end
+  #   if response['content-encoding'] == 'gzip'
+  #     body = Zlib::GzipReader.new(StringIO.new(response.body)).read
+  #   else
+  #     body = response.body
+  #   end
     
-    body
-  end
+  #   body
+  # end
   
   
   def parse_and_save(scraped_data)
