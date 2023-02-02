@@ -28,12 +28,9 @@ gem "webdrivers"
 gem 'rexml', '~> 3.2', '>= 3.2.5'
 gem 'axlsx_rails'
 gem 'axlsx'
-gem 'capistrano'
-gem 'capistrano-rails'
-gem 'capistrano-passenger'
-gem 'capistrano-rbenv'
-gem 'capistrano-bundler'
-gem 'capistrano-rvm'
+
+
+gem 'puma'
 
 
 
@@ -95,6 +92,12 @@ group :development do
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
+
+  gem 'capistrano',         require: false
+    gem 'capistrano-rvm',     require: false
+    gem 'capistrano-rails',   require: false
+    gem 'capistrano-bundler', require: false
+    gem 'capistrano3-puma',   require: false
 
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
