@@ -5,11 +5,19 @@ set :rvm_ruby_version, '3.1.2'
 
 
 # Load DSL and set up stages
-require "capistrano/setup"
+require 'capistrano/setup'
+require 'capistrano/deploy'
 
-# Include default deployment tasks
-require "capistrano/deploy"
+require 'capistrano/rails'
+require 'capistrano/bundler'
 require 'capistrano/rvm'
+require 'capistrano/puma'
+install_plugin Capistrano::Puma
+
+install_plugin Capistrano::Puma::Systemd
+require "capistrano/rails/assets"
+
+
 # Load the SCM plugin appropriate to your project:
 #
 # require "capistrano/scm/hg"
@@ -39,15 +47,8 @@ install_plugin Capistrano::SCM::Git
 #  require "capistrano/rails/assets"
 #  require "capistrano/rails/migrations"
 # require "capistrano/passenger"
-require 'capistrano'
-require 'capistrano-rails'
-
-require 'capistrano/puma'
 
 
-require 'capistrano/bundler' # Rails needs Bundler, right?
-require 'capistrano/rails/assets'
-require 'capistrano/rails/migrations'
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
