@@ -18,7 +18,6 @@ class ScrapperService
     parsed_data = []
     
     @xlsx.each  do |row|
-      binding.pry
       # self.scrape_info("plcity", "https://www.plc-city.com/shop/en/content/search?q=#{row[0]}", 5, row[0]) this is just for testing, delete when done
       suppliers_list.each do |supplier| # here sends the supplier to iterate
         
@@ -66,7 +65,6 @@ class ScrapperService
       scrape_info["inventory"] == [] ? scrape_info["inventory"] = "0": scrape_info["inventory"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
       scrape_info["supplier_id"] = supplier_id
       scrape_info["part_number"] = part_number
-      binding.pry
       scrape_info["price"].each_with_index do |price, idx|
         
         price.gsub!(/[^0-9.]/, '')
