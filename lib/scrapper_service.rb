@@ -41,7 +41,7 @@ class ScrapperService
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument("user-agent=Mozilla/5.0(Windows NT 10.0; Win64; x64; rv:118.0) Gecko/20100101 Firefox/118.0")
-    options.add_argument{"--webdriver-executable-path=../geckodriver"}
+    options.add_argument("--webdriver-executable-path=../geckodriver")
     driver = Selenium::WebDriver.for(:firefox, options: options)
     driver.get(url)
     sleep 2
