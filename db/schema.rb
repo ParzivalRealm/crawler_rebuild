@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_07_144437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -44,6 +44,32 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_31_195151) do
     t.bigint "supplier_id", null: false
     t.index ["part_number_id"], name: "index_part_numbers_suppliers_on_part_number_id"
     t.index ["supplier_id"], name: "index_part_numbers_suppliers_on_supplier_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.string "status"
+    t.string "start_date"
+    t.string "end_date"
+    t.string "project_manager"
+    t.string "project_owner"
+    t.string "project_team"
+    t.string "project_budget"
+    t.string "project_risk"
+    t.string "project_milestones"
+    t.string "project_dependencies"
+    t.string "project_issues"
+    t.string "project_notes"
+    t.string "project_attachments"
+    t.string "project_tasks"
+    t.string "project_comments"
+    t.string "project_reports"
+    t.string "project_timesheets"
+    t.string "project_invoices"
+    t.string "project_expenses"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "scraped_data", force: :cascade do |t|

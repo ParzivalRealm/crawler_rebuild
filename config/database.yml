@@ -9,7 +9,7 @@ default: &default
 development:
   <<: *default
   database: crawler_rebuild_development
-  username: deploy
+  username: postgres
   password: Kingdom1
 
 
