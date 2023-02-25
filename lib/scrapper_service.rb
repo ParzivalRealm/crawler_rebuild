@@ -19,17 +19,17 @@ class ScrapperService
     
     @xlsx.each  do |row|
       
-      self.scrape_info("williamsautomations", "https://williamsautomation.com/search?type=product&options%5Bprefix%5D=last&q=#{row[0]}", 4, row[0]) #this is just for testing, delete when done
-      # suppliers_list.each do |supplier| # here sends the supplier to iterate
+      #self.scrape_info("williamsautomations", "https://williamsautomation.com/search?type=product&options%5Bprefix%5D=last&q=#{row[0]}", 4, row[0]) #this is just for testing, delete when done
+       suppliers_list.each do |supplier| # here sends the supplier to iterate
         
-      #   base_url = supplier.website
-      #   searchpath = supplier.searchpath.gsub('ssacprtno', row[0])
-      #   url = base_url + searchpath
-      #   if supplier.name == "digikey"
-      #     url = base_url
-      #   end
-      #   self.scrape_info(supplier.name, url, supplier.id, row[0])
-      # end
+         base_url = supplier.website
+         searchpath = supplier.searchpath.gsub('ssacprtno', row[0])
+         url = base_url + searchpath
+         if supplier.name == "digikey"
+           url = base_url
+         end
+         self.scrape_info(supplier.name, url, supplier.id, row[0])
+       end
     end
   end
   
@@ -56,14 +56,27 @@ class ScrapperService
     case supplier_name # delete this line when done debugging and change the line below to supplier_name
       
     when "alliedelec"
+
       xpaths = self.xpaths(supplier_name)
-      scrape_info["price"] = driver.find_elements(:xpath, xpaths["price"]).map(&:text) rescue ["0"]
-      scrape_info["price"] == [] ? scrape_info["price"] = "0": scrape_info["price"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-      scrape_info["order_amount"] = driver.find_elements(:xpath, xpaths["order_amount"]).map(&:text) rescue ["0"]
-      scrape_info["order_amount"] == [] ? scrape_info["order_amount"] = "0": scrape_info["order_amount"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
+      begin
+        scrape_info["price"] = driver.find_elements(:xpath, xpaths["price"]).map(&:text) 
+      rescue
+        scrape_info["price"] = 0
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+      end
+      begin
+        scrape_info["order_amount"] = driver.find_elements(:xpath, xpaths["order_amount"]).map(&:text)
+      rescue
+        scrape_info["order_amount"] = 0
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any order amount results for part number: #{part_number}")
+      end
+      begin
+        scrape_info["inventory"] = driver.find_elements(:xpath, xpaths["inventory"]).map(&:text)
+      rescue
+        scrape_info["inventory"] = 0
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any inventory results for part number: #{part_number}")
+      end
       
-      scrape_info["inventory"] = driver.find_elements(:xpath, xpaths["inventory"]).map(&:text) rescue ["0"]
-      scrape_info["inventory"] == [] ? scrape_info["inventory"] = "0": scrape_info["inventory"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
       scrape_info["supplier_id"] = supplier_id
       scrape_info["part_number"] = part_number
       scrape_info["price"].each_with_index do |price, idx|
@@ -71,71 +84,126 @@ class ScrapperService
         price.gsub!(/[^0-9.]/, '')
         scrape_info["order_amount"][idx].gsub!(/[^0-9]/, '')
       
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"][idx], inventory: scrape_info["inventory"][idx], price: price)
+        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"][idx], inventory: scrape_info["inventory"][0], price: price)
         scraped_data_instance.save
       end
     
       
-    when "plcity"
-      item = driver.find_element(:css, "#sniperfast_search .sniperfast_product a") rescue driver.current_url #this means that the product was not found
-      links = [item.attribute('href')] rescue [item]
-      xpaths = self.xpaths(supplier_name)
+    when "plcity" #Pending to handle the search results navigation, right now item variable gets assigned to the scrapper url, but it should do a navigation to the first item.
+      begin
+        item = driver.find_element(:xpath, "//div[@class='sniperfast_product snpf_prod_last']/a")
+        if item == nil #this is for when the search returns no results but the item actually exists, idk why sometimes it returns no results.
+          driver.get(url)
+          sleep 2
+          item = driver.find_element(:xpath, "//div[@class='sniperfast_product snpf_prod_last']/a")
+          driver.navigate.to(item.attribute('href'))
+        else
+          driver.navigate.to(item.attribute('href'))
+        end
+      rescue
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
+          binding.pry
+          return
+      end
       
-      links.each do |link|williamsautomations
-        data_value = driver.find_element(:css, ".product_price").text rescue ["0"]
-        data_value == [] ? data_value = ["0"] : data_value #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-        scrape_info["price"] = driver.find_element(:xpath, xpaths["price"]).text rescue "0"
-        scrape_info["price"] == [] ? scrape_info["price"] = "0": scrape_info["price"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-        scrape_info["price"].gsub!(/[^0-9.]/, '')
-        scrape_info["inventory"] = driver.find_element(:xpath, xpaths["inventory"]).map(&:text) rescue ["0"]
-        scrape_info["inventory"] == [] ? scrape_info["inventory"] = "0": scrape_info["inventory"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-        scrape_info["order_amount"] = 1
-        scrape_info["supplier_id"] = supplier_id
-        scrape_info["part_number"] = part_number
+      if item != nil
+      sleep 2
+      xpaths = self.xpaths(supplier_name)
+      out_of_stock_indicator = driver.find_elements(:xpath, "//div[contains(@class,'discontinued')]")
+      out_of_stock_indicator.empty? ? out_of_stock_indicator = true : out_of_stock_indicator = false
+
+      if out_of_stock_indicator
+        scrape_info["price"] = 0
+        scrape_info["inventory"] = 0
+        scrape_info["order_amount"] = 0
         scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"]) 
         scraped_data_instance.save
+      else
+        scrape_info["order_amount"] = 1 #this is a default value, as the supplier does not provide this information
+        begin
+          scrape_info["price"] = driver.find_element(:xpath, "//*[@id='new_price_display']").text.gsub(/[^0-9.]/, '')
+        rescue
+          scrape_info["price"] = 0
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+        end
+        begin
+          discontinued_flag_exists = driver.find_elements(:xpath, "//*[@class='avilability_status discontinued']")
+          discontinued_flag_exists.empty? ? discontinued_flag_exists = false : discontinued_flag_exists = true
+          if discontinued_flag_exists
+            scrape_info["inventory"] = 0
+            @scrapper.errors.add(:base, "Error: #{supplier_name} only has external stock for: #{part_number}")
+          else
+            binding.pry
+            scrape_info["inventory"] = driver.find_element(:xpath, "//*[@id='quantityAvailable']").text.gsub(/[^0-9]/, '').match(/\d{0,3}/)[0]
+          end
+          rescue NoMethodError
+
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any inventory results for part number: #{part_number}")
+        end
+        
+        begin
+          scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
+          scraped_data_instance.save
+        rescue
+          @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+        end
+
+      end
+      else
+        binding.pry 
       end
       
       
     when "wiautomation"
+
       xpaths = self.xpaths(supplier_name)
-      item = driver.find_elements(:xpath, "//a[contains(@class, 'product_name')]") rescue driver.current_url #this means that the product was not found
-      exact_match = item.select do |i|
+      begin
+      item = driver.find_elements(:xpath, "//a[contains(@class, 'product_name')]") 
+      rescue
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
+      end
+      exact_match_indicator = item.select do |i|
         i.attribute('href').downcase.include?(part_number.downcase)
       end
-      link = exact_match[0].attribute('href') rescue nil
-      
-      if link == nil #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next xpath
-        
+
+      exact_match_indicator.empty? ? link = false : link = exact_match_indicator[0].attribute('href')
+
+      if link == false
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
         scrape_info["price"] = 0
         scrape_info["inventory"] = 0
         scrape_info["order_amount"] = 0
-        scrape_info["supplier_id"] = supplier_id
-        scrape_info["part_number"] = part_number
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"]) 
-        scraped_data_instance.save
-        return true#this is to stop the method and go to the next supplier
+        begin
+          scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
+          scraped_data_instance.save
+        rescue
+          @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+        end
+      else
+        driver.navigate.to(link)
+        sleep 2
+        scrape_info["order_amount"] = 1 #this is a default value, as the supplier does not provide this information
+        begin
+          scrape_info["price"] = driver.find_element(:xpath, "//div[contains(@class,'wrap_comp_product_buy_info')]//div[contains(@class, 'main_product_price')]//div[contains(@class, 'price')]").text.gsub(/[^0-9.]/, '')
+        rescue
+          scrape_info["price"] = 0
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+        end
+        begin
+          scrape_info["inventory"] = driver.find_element(:xpath, "//div[contains(@class,'stock_label')]").text.gsub(/[^0-9]/, '')
+        rescue NoMethodError
+          scrape_info["inventory"] = 0
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any inventory results for part number: #{part_number}")
+        end
+        begin
+          scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
+          scraped_data_instance.save
+        rescue
+          @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+        end
         
       end   
       
-      driver.get(link)
-      
-      sleep 1
-      selenium_elements_price = driver.find_elements(:xpath, xpaths["price"])
-      selenium_elements_inventory = driver.find_elements(:xpath, xpaths["inventory"])
-      
-      selenium_elements_price.each_with_index do |selenium_element, idx|
-        data_value = selenium_element.text rescue ["0"]
-        data_value == [] ? data_value = "0" : data_value #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-        scrape_info["price"] = data_value
-        scrape_info["inventory"] = selenium_elements_inventory[idx].text rescue 0
-        scrape_info["inventory"] == [] ? scrape_info["inventory"] = "0": scrape_info["inventory"] #this means that the product was not found or that the part number is not exact so we just fill the data with "0"and go to next supplier
-        scrape_info["order_amount"] = 1
-        scrape_info["supplier_id"] = supplier_id
-        scrape_info["part_number"] = part_number
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
-        scraped_data_instance.save
-      end
     # when "digikey"
     #   #this doesnt use selenium, it uses http requests to digikey javascript function, and then parses the response this might get patched by digikey
     #   suggestions = fetch_suggestions(part_number)
@@ -169,46 +237,64 @@ class ScrapperService
         
     #   end
       
-    when "mouser"
-      page_info = fetch_page(url)
-      doc = Nokogiri::HTML(page_info)
-      body = doc.xpath("//body")
+    # when "mouser"
+    #   page_info = fetch_page(url)
+    #   doc = Nokogiri::HTML(page_info)
+    #   body = doc.xpath("//body")
       
-      if body.text.include?("Object moved to ")
-        product_path = doc.css("a").first["href"]
-        url = "https://www.mouser.com" + product_path
-        page_info = fetch_page(url)
-        doc = Nokogiri::HTML(page_info)
-        info = doc.xpath("//script")
-        json_unparsed = info.children[6].text
-        json_parsed = JSON.parse(json_unparsed)
-        scrape_info["price"] = json_parsed["offers"]["price"]
-        scrape_info["order_amount"] = 1
-        scrape_info["inventory"] = json_parsed["offers"]["InventoryLevel"]
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
-        scraped_data_instance.save
-      else
-        scrape_info["price"] = 0
-        scrape_info["order_amount"] = 1
-        scrape_info["inventory"] = 0
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
-        scraped_data_instance.save
-      end
+    #   if body.text.include?("Object moved to ")
+    #     product_path = doc.css("a").first["href"]
+    #     url = "https://www.mouser.com" + product_path
+    #     page_info = fetch_page(url)
+    #     doc = Nokogiri::HTML(page_info)
+    #     info = doc.xpath("//script")
+    #     json_unparsed = info.children[6].text
+    #     begin
+    #       json_parsed = JSON.parse(json_unparsed)
+    #     rescue
+    #       @scrapper.errors.add(:base, "Error: Json not parsed correctly for #{supplier_name} ")
+          
+    #     end
+    #     begin
+    #       scrape_info["price"] = json_parsed["offers"]["price"]
+    #     rescue
+    #       scrape_info["price"] = 0
+    #       @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+    #     end
+    #     begin
+    #       scrape_info["inventory"] = json_parsed["offers"]["InventoryLevel"]
+    #     rescue
+    #       scrape_info["inventory"] = 0
+    #       @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any inventory results for part number: #{part_number}")
+    #     end
+    #     begin
+    #       scrape_info["order_amount"] = 1 #mouser doesnt have a minimum order amount, so we just put 1
+    #       scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
+    #       scraped_data_instance.save
+    #     rescue
+    #       @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+    #     end
+    #   else
+    #     @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
+    #   end
     when "mrosupply"
+
       not_found_value = driver.find_element(:xpath, "//*[contains(@class, 'm-primary-box--title')]").text rescue nil
       if not_found_value == "Looks like no matches were found. But with a selection of over 1.25 million parts (and growing), we probably have the item you are looking for."
-        scrape_info["price"] = 0
-        scrape_info["order_amount"] = 1
-        scrape_info["inventory"] = 0
-        scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
-        scraped_data_instance.save
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
       else
         product_page_result = driver.find_element(:xpath, "//*[contains(@class, 'm-catalogue-product-img')]/a")
         product_page_link = product_page_result.attribute("href")
         driver.navigate.to product_page_link
         sleep(1)
         price_result = driver.find_element(:xpath, "//*[contains(@class, 'price')]")
-        scrape_info["price"] = price_result.text.gsub(/[^0-9.]/, '') rescue ["0"]
+        begin
+        scrape_info["price"] = price_result.text.gsub(/[^0-9.]/, '') 
+        rescue
+          scrape_info["price"] = 0
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+        end
+    
         out_of_stock_indicator = driver.find_element(:xpath, "//*[contains(@class, 'u-warning')]").text rescue nil
         if out_of_stock_indicator == "CONFIRM AVAILABILITY"
           scrape_info["inventory"] = 0
@@ -218,6 +304,11 @@ class ScrapperService
           scrape_info["inventory"] = 1 #it appears that every item has the confirm availability button, so we need to check the inventory status when we find a product that displays differently.
           scrape_info["order_amount"] = 1
           scraped_data_instance = ScrapedDatum.new(scrapper_id: @scrapper.id, supplier_id: supplier_id, part_number: part_number, order_amount: scrape_info["order_amount"], inventory: scrape_info["inventory"], price: scrape_info["price"])
+          begin
+            scraped_data_instance.save
+          rescue
+            @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+          end
         end
       end
 
@@ -246,11 +337,13 @@ class ScrapperService
             )
             scraped_data_instance.save
           rescue StandardError
-            puts "Could not save record"
+            @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+
             next
           end
         rescue ArgumentError
-            puts "Could not convert to integer or float skipping record"
+            @scrapper.errors.add(:base, "Error: Couldn't convert #{supplier_name} order amount or price to integer or float for part number: #{part_number}")
+
             next
         end
       end
@@ -267,7 +360,8 @@ class ScrapperService
             scrape_info["order_amount"] = data_container.find_element(:xpath, "*/div[@class='col-xs-4 c-part-detail__pricing-quantity']").text.gsub(/[^0-9.]/, '')
           rescue StandardError
             scrape_info["order_amount"] = 0
-            puts "order_amount not found... setting to 0"
+            @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any order amount results for part number: #{part_number}")
+            
             next
           end
 
@@ -275,7 +369,8 @@ class ScrapperService
             scrape_info["price"] = data_container.find_element(:xpath, "*/div[@class='col-xs-4 c-part-detail__pricing-extended']").text.gsub(/[^0-9.]/, '')
           rescue StandardError
             scrape_info["price"] = 0
-            puts "price not found... setting to 0"
+            @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+            
             next
           end
   
@@ -290,20 +385,28 @@ class ScrapperService
             )
             scraped_data_instance.save
           rescue StandardError
-            puts "Could not save record"
+            @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+
             next
           end
         end
 
       rescue StandardError
-        puts "Could not find inventory or price table"
+        @scrapper.errors.add(:base, "Error: #{supplier_name} Could not find any inventory or price table: #{part_number}")
+
       end
     when "williamsautomations"
       not_found_indicator = driver.find_element(:xpath, "//*[@class='tc']").text rescue false
-      not_found_indicator == false ? next : not_found_indicator = not_found_indicator
+      if not_found_indicator == false
+        @scrapper.errors.add(:base, "Error: #{supplier_name} scraping error for: #{part_number}")
+        
+      else
+        not_found_indicator = not_found_indicator
+      end
+     
       if not_found_indicator.include?("did not yield any results")
-        puts "No results found for #{part_number}"
-        next
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not yield any results for part number: #{part_number}")
+        
       else
         product_found_img = driver.find_element(:xpath, "//*[@class = 'grid_img_wr']/a")
         product_url = product_found_img.attribute("href")
@@ -313,15 +416,17 @@ class ScrapperService
           scrape_info["price"] = driver.find_element(:xpath, "//*[contains(@class, 'money')]").text.gsub(/[^0-9.]/, '')
         rescue StandardError
           scrape_info["price"] = 0
-          puts "price not found... setting to 0"
-          next
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price results for part number: #{part_number}")
+
+          
         end
         begin
           scrape_info["inventory"] = driver.find_element(:xpath, "//*[contains(@id, 'available-qty')]").text.gsub(/[^0-9.]/, '')
         rescue StandardError
           scrape_info["inventory"] = 0
-          puts "inventory not found... setting to 0"
-          next
+          @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any inventory results for part number: #{part_number}")
+          
+  
         end
         scrape_info["order_amount"] = 1
         begin
@@ -335,12 +440,11 @@ class ScrapperService
           )
           scraped_data_instance.save
         rescue StandardError
-          puts "Could not save record"
-          next
+          @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+
         end
       end
 
-      binding.pry
     else
       #remove this when all suppliers are added
     end
