@@ -12,6 +12,7 @@
 
     def new
       @scrapper = Scrapper.new
+      @scrape_errors = []
       render 'create_with_attachment'
     end
 
@@ -39,6 +40,7 @@
         attachment.file = params[:scrapper][:attachment]
         if attachment.save
           ScrapperService.new(attachment.file, @scrapper).call
+          flash[:error] = @scrapper.errors.full_messages
           redirect_to @scrapper
         else
           flash[:error] = "There was an error saving the attachment"
@@ -85,15 +87,18 @@
       p = Axlsx::Package.new
       wb = p.workbook
       wb.add_worksheet(name: "Scraped Data") do |sheet|
-        @scrappers.keys.each do |key|
-          sheet.add_row [key.capitalize]
-        end
-        @scrappers.values.first.count.times do |i|
-          row = []
-          @scrappers.values.each do |values|
-            row << values[i]
+        sheet.add_row ["Supplier", "Product_id", "order_amount", "inventory", "price", "created_at"]
+        @scrappers.each do |supplier, products|
+          products.each do |product_id, info|
+            info.each do |item|
+              row = [supplier.capitalize, product_id]
+              row << item[:order_amount]
+              row << item[:inventory]
+              row << item[:price]
+              row << item[:created_at].strftime("%m/%d/%Y")
+              sheet.add_row row
+            end
           end
-          sheet.add_row row
         end
       end
       p.serialize(filename)
