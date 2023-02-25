@@ -1,8 +1,13 @@
-<%= simple_form_for @scrapper, url: create_with_attachment_scrappers_path(@scrapper), method: :post, html: { class: "form-horizontal" } do |f|%>
-  <div class="form-group">
-    <%= f.input :attachment, as: :file, input_html: { class: "form-control-file" } %>
+<div class="container mt-5">
+  <div class="d-flex justify-content-center">
+    <%= simple_form_for @scrapper, url: create_with_attachment_scrappers_path(@scrapper), method: :post, html: { class: "form-horizontal border p-3 rounded shadow" } do |f|%>
+      <div class="form-group mx-5 text-center">
+        <%= f.input :attachment, as: :file, input_html: { class: "form-control-file border p-2 rounded" } %>
+      </div>
+      <div class="form-group p-5">
+        <%= f.submit "Submit", class: "btn btn-primary shadow" %>
+      </div>
+    <%end%>
   </div>
-  <div class="form-group">
-    <%= f.submit "Submit", class: "btn btn-primary" %>
-  </div>
-<%end%>
+</div>
+
