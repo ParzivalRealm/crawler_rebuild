@@ -31,5 +31,18 @@
 <%= link_to "Download XLSX", generate_xlsx_scrapper_path(@scrappers), class: "btn btn-primary" %>
 
 
+<div class="table-responsive">
+  <% if flash[:error] %>
+    <table>
+      <% flash[:error].each do |message| %>
+        <tr>
+          <td><%= message %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>
+
+
 
 
