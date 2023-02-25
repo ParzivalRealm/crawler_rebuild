@@ -102,7 +102,7 @@ class ScrapperService
         end
       rescue
           @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any results for part number: #{part_number}")
-          binding.pry
+          
           return
       end
       
@@ -133,7 +133,7 @@ class ScrapperService
             scrape_info["inventory"] = 0
             @scrapper.errors.add(:base, "Error: #{supplier_name} only has external stock for: #{part_number}")
           else
-            binding.pry
+            
             scrape_info["inventory"] = driver.find_element(:xpath, "//*[@id='quantityAvailable']").text.gsub(/[^0-9]/, '').match(/\d{0,3}/)[0]
           end
           rescue NoMethodError
@@ -150,7 +150,7 @@ class ScrapperService
 
       end
       else
-        binding.pry 
+         
       end
       
       
