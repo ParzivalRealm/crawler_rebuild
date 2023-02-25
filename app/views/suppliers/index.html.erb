@@ -1,14 +1,29 @@
-<p style="color: green"><%= notice %></p>
+<div class="d-flex container justify-content-center mt-5">
+  <div class="col-md-8">
+    <% if notice %>
+      <p class="alert alert-success">
+        <%= notice %>
+      </p>
+    <% end %>
+    
+    <h1 class="text-center mb-4">Suppliers</h1>
+    
+    <div class="card border rounded-0 shadow-sm mb-4">
+      <div class="card-header bg-white">
+        <h5 class="card-title mb-0">Supplier Info</h5>
+      </div>
+      <div class="card-body">
+        <% @suppliers.each do |supplier| %>
+          <%= render supplier %>
+          <p>
+            <%= link_to "Show this supplier", supplier %>
+          </p>
+        <% end %>
+      </div>
+    </div>
 
-<h1>Suppliers</h1>
-
-<div id="suppliers">
-  <% @suppliers.each do |supplier| %>
-    <%= render supplier %>
-    <p>
-      <%= link_to "Show this supplier", supplier %>
-    </p>
-  <% end %>
+    <div class="d-flex justify-content-between mt-4">
+      <%= link_to "New supplier", new_supplier_path, class: "btn btn-primary" %>
+    </div>
+  </div>
 </div>
-
-<%= link_to "New supplier", new_supplier_path %>

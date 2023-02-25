@@ -1,20 +1,24 @@
-<% if notice %>
-  <p class="alert alert-success">
-    <%= notice %>
-  </p>
-<% end %>
+<div class="d-flex justify-content-center align-items-center container mt-5">
+  <div class="d-flex flex-column justify-content-center align-items-center">
+    <% if notice %>
+      <p class="alert alert-success">
+        <%= notice %>
+      </p>
+    <% end %>
 
-<div class="card mt-5 mb-5">
-  <div class="card-header">
-    Supplier Info
-  </div>
-  <div class="card-body">
-    <%= render @supplier %>
-  </div>
-</div>
+    <div class="card mt-5 mb-5">
+      <div class="card-header">
+        Supplier Info
+      </div>
+      <div class="card-body">
+        <%= render @supplier %>
+      </div>
+    </div>
 
-<div class="d-flex justify-content-between mt-5">
-  <%= link_to "Edit this Supplier", edit_supplier_path(@supplier), class: "btn btn-primary" %>
-  <%= link_to "Back to Suppliers", suppliers_path, class: "btn btn-secondary" %>
-  <%= button_to "Destroy this Supplier", @supplier, method: :delete, class: "btn btn-danger" %>
+    <div class="d-flex justify-content-between mt-5">
+      <%= link_to "Edit this Supplier", edit_supplier_path(@supplier), class: "btn btn-primary" %>
+      <%= link_to "Back to Suppliers", suppliers_path, class: "btn btn-secondary" %>
+      <%= button_to "Destroy this Supplier", @supplier, method: :delete, class: "btn btn-danger" %>
+    </div>
+  </div>
 </div>
