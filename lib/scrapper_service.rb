@@ -314,40 +314,43 @@ class ScrapperService
 
     when "onlinecomponents"
       scrape_info["inventory"] = driver.find_element(:xpath, "//span[contains(@class,'value Instock-availability')]").text rescue 0
-      price_table = driver.find_element(:xpath, "//div[@id='divPriceListLeft']")
-      order_quantities = price_table.find_elements(:xpath, "*/div[contains(@class, 'col-4 pr-5 text-graphite-dark pl-0')]")
-      prices = price_table.find_elements(:xpath, "*/*[@class='col-4 text-right']")
-      prices.shift
-      order_quantities.each_with_index do |element, index|
-        order_amount = element.text.gsub(/[^0-9.]/, '')
-        price = prices[index].text.gsub(/[^0-9.]/, '')
-        begin
-          order_amount_int = Integer(order_amount)
-          price_float = Float(price)
-          scrape_info["order_amount"] = order_amount_int
-          scrape_info["price"] = price_float
+      price_table = driver.find_elements(:xpath, "//div[@id='divPriceListLeft']")
+      if price_table.empty?
+        @scrapper.errors.add(:base, "Error: #{supplier_name} did not return any price_table for part number: #{part_number}")
+      else
+        order_quantities = price_table.find_elements(:xpath, "*/div[contains(@class, 'col-4 pr-5 text-graphite-dark pl-0')]")
+        prices = price_table.find_elements(:xpath, "*/*[@class='col-4 text-right']")
+        prices.shift
+        order_quantities.each_with_index do |element, index|
+          order_amount = element.text.gsub(/[^0-9.]/, '')
+          price = prices[index].text.gsub(/[^0-9.]/, '')
           begin
-            scraped_data_instance = ScrapedDatum.new(
-              scrapper_id: @scrapper.id,
-              supplier_id: supplier_id,
-              part_number: part_number,
-              order_amount: scrape_info["order_amount"],
-              inventory: scrape_info["inventory"],
-              price: scrape_info["price"]
-            )
-            scraped_data_instance.save
-          rescue StandardError
-            @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
+            order_amount_int = Integer(order_amount)
+            price_float = Float(price)
+            scrape_info["order_amount"] = order_amount_int
+            scrape_info["price"] = price_float
+            begin
+              scraped_data_instance = ScrapedDatum.new(
+                scrapper_id: @scrapper.id,
+                supplier_id: supplier_id,
+                part_number: part_number,
+                order_amount: scrape_info["order_amount"],
+                inventory: scrape_info["inventory"],
+                price: scrape_info["price"]
+              )
+              scraped_data_instance.save
+            rescue StandardError
+              @scrapper.errors.add(:base, "Error: Couldn't save #{supplier_name} with part number: #{part_number}")
 
-            next
+              next
+            end
+          rescue ArgumentError
+              @scrapper.errors.add(:base, "Error: Couldn't convert #{supplier_name} order amount or price to integer or float for part number: #{part_number}")
+
+              next
           end
-        rescue ArgumentError
-            @scrapper.errors.add(:base, "Error: Couldn't convert #{supplier_name} order amount or price to integer or float for part number: #{part_number}")
-
-            next
         end
-      end
-      
+      end 
     when "tti"
       begin
         scrape_info["inventory"] = driver.find_element(:xpath, "//div[@class='c-part-detail__availability-column']/div/div[contains(@class, 'u-font')]/span") rescue 0
