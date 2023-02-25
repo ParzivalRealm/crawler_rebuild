@@ -6,7 +6,7 @@
 # RAILS_ENV=development bundle exec puma -C ./config/puma.rb
 
 application_path = Rails.root
-railsenv = ENV['RAILS_ENV'] || 'development'
+railsenv = ENV['RAILS_ENV'] || 'production'
 directory application_path
 environment railsenv
 #daemonize true
